@@ -1,0 +1,27 @@
+﻿<table class="table table-striped mt-4">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Role</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Отображение данных пользователя -->
+    <tr>
+        <td th:text="${loggedInUser.id}"></td>
+        <td th:text="${loggedInUser.firstName}"></td>
+        <td th:text="${loggedInUser.lastName}"></td>
+        <td th:text="${loggedInUser.age}"></td>
+        <td th:text="${loggedInUser.email}"></td>
+        <td>
+            <ul>
+                <li th:each="role : ${loggedInUser.roles}" th:text="${role.name}"></li>
+            </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>

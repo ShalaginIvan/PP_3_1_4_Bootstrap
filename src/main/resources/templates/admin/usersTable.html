@@ -1,0 +1,188 @@
+<table class="table table-striped mt-4">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Age</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Итерация по списку users с использованием Thymeleaf -->
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.firstName}"></td>
+        <td th:text="${user.lastName}"></td>
+        <td th:text="${user.age}"></td>
+        <td th:text="${user.email}"></td>
+        <td>
+            <ul>
+                <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+            </ul>
+        </td>
+        <td>
+            <!-- Форма для редактирования пользователя -->
+            <button class="btn btn-info" data-bs-toggle="modal" th:attr="data-bs-target='#editModal_' + ${user.id}">Edit</button>
+
+            <!-- Модальное окно редактирования -->
+            <div class="modal fade"
+                 th:id="'editModal_' + ${user.id}"
+                 th:classappend="${errorUserId == user.id} ? ' show d-block' : ''"
+                 th:style="${errorUserId == user.id} ? 'display:block;' : 'display:none;'"
+                 tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit user</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form th:action="@{/admin/users/update}" th:method="POST" th:object="${user}">
+                                <!-- Поле ID -->
+                                <div class="mb-3">
+                                    <label for="id" class="form-label">ID</label>
+                                    <input type="text" id="id" name="id" class="form-control" th:value="${user.id}" readonly style="background-color: #e9ecef;" />
+                                </div>
+
+                                <!-- Поле First Name -->
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">First Name</label>
+                                    <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" />
+                                    <div style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">FirstName error</div>
+                                </div>
+
+                                <!-- Поле Last Name -->
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Last Name</label>
+                                    <input type="text" id="lastName" name="lastName" class="form-control" th:value="${user.lastName}" />
+                                    <div style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">LastName error</div>
+                                </div>
+
+                                <!-- Поле Age -- изменяем занчение по шагово стрелками вверх и вниз, шаг = 1 -->
+                                <div class="mb-3">
+                                    <label for="age" class="form-label">Age</label>
+                                    <div class="input-group">
+                                        <input type="number" id="age" name="age" class="form-control" th:value="${user.age}" step="1" />
+                                        <div class="input-group-text">
+                                            <i class="bi bi-chevron-up"></i>
+                                            <i class="bi bi-chevron-down"></i>
+                                        </div>
+                                    </div>
+                                    <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age error</div>
+                                </div>
+
+                                <!-- Поле Email -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" />
+                                    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+                                </div>
+
+                                <!-- Поле Password -->
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" id="password" name="password" class="form-control" />
+                                    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                                </div>
+
+                                <!-- Поле Confirm Password -->
+                                <div class="mb-3">
+                                    <label for="passwordConfirm" class="form-label">Confirm Password</label>
+                                    <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control" th:value="${user.passwordConfirm}" />
+                                    <div style="color:red" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}"></div>
+                                </div>
+
+                                <!-- Поле Roles -->
+                                <div class="mb-3">
+                                    <label for="roles" class="form-label">Roles</label>
+                                    <select id="roles" name="roles" class="form-select" multiple style="height: 100px;">
+                                        <option th:each="role : ${roles}"
+                                                th:value="${role.id}"
+                                                th:text="${role.name}"
+                                                th:selected="${user.roles.contains(role)}">
+                                        </option>
+                                    </select>
+                                    <div style="color:red" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}">Roles error</div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </td>
+
+        <td>
+            <!-- Форма для удаления пользователя -->
+            <button class="btn btn-danger" data-bs-toggle="modal" th:attr="data-bs-target='#deleteModal_' + ${user.id}">Delete</button>
+
+            <!-- Модальное окно удаления -->
+            <div class="modal fade"
+                 th:id="'deleteModal_' + ${user.id}"
+                 tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Delete user</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Поля данных пользователя (только для просмотра) -->
+                            <div class="mb-3">
+                                <label for="id" class="form-label">ID</label>
+                                <input type="text" id="id" name="id" class="form-control"
+                                       th:value="${user.id}" readonly style="background-color: #e9ecef;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" id="firstName" name="firstName" class="form-control"
+                                       th:value="${user.firstName}" readonly style="background-color: #e9ecef;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" class="form-control"
+                                       th:value="${user.lastName}" readonly style="background-color: #e9ecef;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="age" class="form-label">Age</label>
+                                <input type="number" id="age" name="age" class="form-control"
+                                       th:value="${user.age}" readonly style="background-color: #e9ecef;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control"
+                                       th:value="${user.email}" readonly style="background-color: #e9ecef;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="roles" class="form-label">Roles</label>
+                                <select id="roles" name="roles" class="form-select" multiple readonly disabled style="background-color: #e9ecef;">
+                                    <option th:each="role : ${user.roles}"
+                                            th:value="${role.id}"
+                                            th:text="${role.name}" selected>
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <form th:action="@{/admin/user/delete(id=${user.id})}" th:method="POST">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tbody>
+</table>
