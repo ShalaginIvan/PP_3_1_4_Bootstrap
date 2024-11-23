@@ -25,40 +25,8 @@ public class AuthController {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
-    private void initDataBase() {
-        if (userService.getCountUsers() == 0) {
-            // если база пуста, то создаем для теста базу из 4 пользователей и таблицу ролей
-            // админ
-            User user1 = new User("Рустам", "Башаев", 30, "kata@mail.ru", "1234");
-            user1.setRoles(new HashSet<>(Arrays.asList(roleService.getRoleAdmin(), roleService.getRoleUser())));
-
-            // user
-            User user2 = new User("Mike", "Tyson", 40, "mikeTyson@gmail.ru", "1234");
-            user2.setRoles(Collections.singleton(roleService.getRoleUser()));
-
-            // админ
-            User user3 = new User("Jon", "Smith", 50, "smith@list.ru", "1234");
-            user3.setRoles(new HashSet<>(Arrays.asList(roleService.getRoleAdmin(), roleService.getRoleUser())));
-
-            // user
-            User user4 = new User("Олег", "Иванов", 60, "oleg@admin.com", "1234");
-            user4.setRoles(Collections.singleton(roleService.getRoleAdmin()));
-
-            user1.setPassword(passwordEncoder.encode(user1.getPassword()));
-            userService.save(user1);
-            user2.setPassword(passwordEncoder.encode(user2.getPassword()));
-            userService.save(user2);
-            user3.setPassword(passwordEncoder.encode(user3.getPassword()));
-            userService.save(user3);
-            user4.setPassword(passwordEncoder.encode(user4.getPassword()));
-            userService.save(user4);
-        }
-    }
-
     @GetMapping("/login")
     public String loginPage() {
-        // если база пуста, то создаем для теста базу из 4 пользователей и таблицу ролей
-        initDataBase();
         return "auth/login";
     }
 
@@ -81,7 +49,7 @@ public class AuthController {
         }
 
         // при регистрации даем роль -  ROLE_USER
-        user.setRoles(Collections.singleton(roleService.getRoleUser()));
+        user.setRoles(Collections.singleton(roleService.get("ROLE_USER")));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if (!userService.save(user)){

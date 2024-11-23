@@ -46,7 +46,7 @@ public class AdminController {
 
         // добавляем список всех пользователей в модель
         model.addAttribute("users", userService.getAll());
-        model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("roles", roleService.getAll());
     }
 
     // Метод проверки выбранных ролей и введенных паролей
