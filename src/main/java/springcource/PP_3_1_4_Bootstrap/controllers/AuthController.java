@@ -13,9 +13,7 @@ import springcource.PP_3_1_4_Bootstrap.model.User;
 import springcource.PP_3_1_4_Bootstrap.services.RoleService;
 import springcource.PP_3_1_4_Bootstrap.services.UserService;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 
 @Controller
 @RequestMapping("/auth")
